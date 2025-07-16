@@ -1,26 +1,55 @@
 from flask import Flask, request
-from telegram_bot import handle_telegram_commands, send_telegram_message
-from apscheduler.schedulers.background import BackgroundScheduler
+from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+from telegram_bot import send_telegram_message, send_last_trade, handle_status_command
+from kucoin_client import check_market
+import os
 
 app = Flask(__name__)
 
-# تقرير يومي 4 م
-scheduler = BackgroundScheduler()
+@app.route('/')
+def home():
+    return "✅ KuCoin Auto-Trader is Live!"
 
-def daily_report():
-    send_telegram_message("📊 تقرير يومي:\n✅ البوت يعمل بشكل طبيعي.\n🕓 الوقت: 4 م")
+@app.route(f'/{TELEGRAM_BOT_TOKEN}', methods=['POST'])
+def telegram_webhook():
+    data = request.get_json()
 
-scheduler.add_job(daily_report, 'cron', hour=13, minute=0)  # 13 UTC = 4 السعودية
-scheduler.start()
+    if "message" in data:
+        chat_id = data["message"]["chat"]["id"]
+        text = data["message"].get("text", "")
 
-@app.route("/", methods=["GET", "POST"])
-def index():
-    if request.method == "POST":
-        data = request.get_json()
-        message = data.get("message", {}).get("text", "")
-        handle_telegram_commands(message)
-        return "OK"
-    return "KuCoin Auto Trader Running ✅"
+        if chat_id != TELEGRAM_CHAT_ID:
+            return "unauthorized", 403
 
-if __name__ == "__main__":
-    app.run(debug=False, host="0.0.0.0", port=10000)
+        # أوامر البوت
+        if text == "/start":
+            send_telegram_message("🤖 مرحباً بك في بوت KuCoin Auto-Trader!\nاكتب /help لرؤية الأوامر.")
+        elif text == "/help":
+            send_telegram_message(
+                "📘 أوامر البوت:\n"
+                "/start - بدء البوت\n"
+                "/help - قائمة الأوامر\n"
+                "/status - حالة البوت الآن\n"
+                "/scan - فحص السوق الآن\n"
+                "/last - عرض آخر صفقة\n"
+                "/pause - إيقاف التداول مؤقتًا\n"
+                "/resume - استئناف التداول"
+            )
+        elif text == "/status":
+            handle_status_command()
+        elif text == "/scan":
+            check_market()
+        elif text == "/last":
+            send_last_trade()
+        elif text == "/pause":
+            with open("paused.txt", "w") as f:
+                f.write("true")
+            send_telegram_message("⏸️ تم إيقاف التداول مؤقتًا.")
+        elif text == "/resume":
+            if os.path.exists("paused.txt"):
+                os.remove("paused.txt")
+            send_telegram_message("▶️ تم استئناف التداول.")
+        else:
+            send_telegram_message("❓ أمر غير معروف. اكتب /help لعرض الأوامر.")
+
+    return "ok", 200
