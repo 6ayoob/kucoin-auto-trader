@@ -1,32 +1,45 @@
 from kucoin.client import Client
-import time
-from config import KUCOIN_API_KEY, KUCOIN_API_SECRET, KUCOIN_API_PASSPHRASE, SYMBOLS, TRADE_PERCENT, STOP_LOSS_PERCENT
+from config import KUCOIN_API_KEY, KUCOIN_API_SECRET, KUCOIN_API_PASSPHRASE, STOP_LOSS_PERCENT
 from strategies import should_buy, should_sell
 from telegram_bot import send_telegram_message
+import time
 
 client = Client(KUCOIN_API_KEY, KUCOIN_API_SECRET, KUCOIN_API_PASSPHRASE)
 
-def run_trading_bot():
-    send_telegram_message("🚀 البوت بدأ العمل الآن ✅")
 
-    while True:
-        for symbol in SYMBOLS:
-            try:
-                klines = client.get_kline(symbol, kline_type="1min", limit=100)
-                closes = [float(c[2]) for c in klines]
-                current_price = closes[-1]
+def get_usdt_symbols():
+    """جلب جميع رموز العملات مقابل USDT"""
+    symbols = client.get_symbol_list()
+    return [s["symbol"] for s in symbols if s["quoteCurrency"] == "USDT" and s["enableTrading"]]
 
-                balance = client.get_account_list()
-                usdt_balance = float(next((b['balance'] for b in balance if b['currency'] == 'USDT' and b['type'] == 'trade'), "0"))
 
-                qty = (usdt_balance * TRADE_PERCENT / 100) / current_price
+def check_market(symbol="BTC-USDT"):
+    """تحليل السوق لعملة واحدة"""
+    try:
+        klines = client.get_kline_data(symbol, kline_type="15min", limit=50)
+        closes = [float(k[2]) for k in klines]  # سعر الإغلاق
+        last_price = float(client.get_ticker(symbol)["price"])
 
-                if should_buy(closes):
-                    order = client.create_market_order(symbol, 'buy', size=round(qty, 6))
-                    send_telegram_message(f"✅ شراء {symbol} بسعر {current_price}")
-                elif should_sell(closes):
-                    send_telegram_message(f"📉 إشارة بيع لـ {symbol} (اختبار فقط)")
-            except Exception as e:
-                send_telegram_message(f"❌ خطأ في التداول لـ {symbol}: {str(e)}")
+        market_data = {
+            "closes": closes,
+            "price": last_price
+        }
 
-        time.sleep(300)  # كل 5 دقائق
+        if should_buy(market_data):
+            send_telegram_message(f"📈 فرصة شراء محتملة لـ {symbol} عند السعر: {last_price}")
+
+        buy_price = 51000  # مثال، يجب استبداله بالسعر الفعلي للشراء
+        if should_sell(market_data, buy_price, STOP_LOSS_PERCENT):
+            send_telegram_message(f"⚠️ إشارة بيع لـ {symbol} - كسر الستوب لوز. السعر الحالي: {last_price}")
+
+    except Exception as e:
+        send_telegram_message(f"❌ خطأ أثناء تحليل {symbol}: {str(e)}")
+
+
+def check_all_usdt_pairs():
+    """تحليل جميع العملات مقابل USDT"""
+    symbols = get_usdt_symbols()
+    send_telegram_message(f"🔍 بدء تحليل {len(symbols)} عملة...")
+    for symbol in symbols:
+        time.sleep(0.5)  # لتقليل الضغط على API
+        check_market(symbol)
