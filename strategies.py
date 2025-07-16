@@ -1,14 +1,18 @@
-import ta
 import pandas as pd
+import ta
 
-def apply_strategy(df):
-    df['EMA20'] = ta.trend.ema_indicator(df['close'], window=20).ema_indicator()
-    df['MACD'] = ta.trend.macd_diff(df['close'])
-    df['RSI'] = ta.momentum.RSIIndicator(df['close']).rsi()
+def should_buy(closes):
+    df = pd.DataFrame(closes, columns=["close"])
+    df["rsi"] = ta.momentum.RSIIndicator(df["close"]).rsi()
+    macd = ta.trend.MACD(df["close"])
+    df["macd"] = macd.macd()
+    df["macd_signal"] = macd.macd_signal()
+    return df["rsi"].iloc[-1] < 30 and df["macd"].iloc[-1] > df["macd_signal"].iloc[-1]
 
-    latest = df.iloc[-1]
-    if latest['close'] > latest['EMA20'] and latest['MACD'] > 0 and latest['RSI'] < 70:
-        return "buy"
-    elif latest['MACD'] < 0 and latest['RSI'] > 50:
-        return "sell"
-    return "hold"
+def should_sell(closes):
+    df = pd.DataFrame(closes, columns=["close"])
+    df["rsi"] = ta.momentum.RSIIndicator(df["close"]).rsi()
+    macd = ta.trend.MACD(df["close"])
+    df["macd"] = macd.macd()
+    df["macd_signal"] = macd.macd_signal()
+    return df["rsi"].iloc[-1] > 70 and df["macd"].iloc[-1] < df["macd_signal"].iloc[-1]
