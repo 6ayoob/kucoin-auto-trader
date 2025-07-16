@@ -47,3 +47,17 @@ def handle_telegram_commands(message_text):
 
     else:
         send_telegram_message("❓ أمر غير معروف. استخدم /help.")
+import json
+import json
+
+def send_last_trade():
+    try:
+        with open("trades.csv", "r") as f:
+            lines = f.readlines()
+            if len(lines) >= 2:
+                last = lines[-1].strip()
+                send_telegram_message(f"📊 آخر صفقة:\n{last}")
+            else:
+                send_telegram_message("❌ لا يوجد صفقات مسجلة بعد.")
+    except Exception as e:
+        send_telegram_message(f"حدث خطأ أثناء جلب آخر صفقة:\n{str(e)}")
