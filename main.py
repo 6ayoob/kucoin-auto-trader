@@ -1,6 +1,9 @@
 import threading
 from kucoin_client import start_trading_bot
 
+from telegram_bot import send_telegram_message
+send_telegram_message("✅ تم تشغيل البوت بنجاح على Render!")
+
 def run_bot():
     start_trading_bot()
 
