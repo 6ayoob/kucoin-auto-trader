@@ -1,8 +1,13 @@
 from kucoin.client import Client
-from config import KUCOIN_API_KEY, KUCOIN_API_SECRET, KUCOIN_API_PASSPHRASE, STOP_LOSS_PERCENT
 from strategies import should_buy, should_sell
 from telegram_bot import send_telegram_message
 import time
+
+# إعدادات API ومحددات التداول
+KUCOIN_API_KEY = "63c38cd705a0c50001e97849"
+KUCOIN_API_SECRET = "1e3f4e7a-78f8-48b1-a3b4-6f7b5e15f49b"
+KUCOIN_API_PASSPHRASE = "zidni123"
+STOP_LOSS_PERCENT = 5  # نسبة الإيقاف
 
 client = Client(KUCOIN_API_KEY, KUCOIN_API_SECRET, KUCOIN_API_PASSPHRASE)
 
