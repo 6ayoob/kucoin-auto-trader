@@ -1,7 +1,6 @@
 import requests
-from config import TELEGRAM_BOT_TOKEN, TELEGRAM_USER_ID
+from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 
-def send_telegram_message(message):
+def send_telegram_message(text):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-    data = {"chat_id": TELEGRAM_USER_ID, "text": message}
-    requests.post(url, data=data)
+    requests.post(url, data={"chat_id": TELEGRAM_CHAT_ID, "text": text})

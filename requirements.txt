@@ -1,2 +1,5 @@
-
 flask
+pandas
+requests
+kucoin-python
+ta

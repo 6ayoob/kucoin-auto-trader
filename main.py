@@ -1,4 +1,3 @@
-
 import threading
 from kucoin_client import start_trading_bot
 
