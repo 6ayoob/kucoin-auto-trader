@@ -1,15 +1,9 @@
-import os
-from dotenv import load_dotenv
+# config.py
 
-load_dotenv()
+TELEGRAM_BOT_TOKEN = "7863509137:AAHBuRbtzMAOM_yBbVZASfx-oORubvQYxY8"
 
-KUCOIN_API_KEY = os.getenv("KUCOIN_API_KEY")
-KUCOIN_API_SECRET = os.getenv("KUCOIN_API_SECRET")
-KUCOIN_API_PASSPHRASE = os.getenv("KUCOIN_API_PASSPHRASE")
-
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
-
-TRADE_PERCENT = float(os.getenv("TRADE_PERCENT", 10))
-STOP_LOSS_PERCENT = float(os.getenv("STOP_LOSS_PERCENT", 5))
-TAKE_PROFIT_PERCENT = float(os.getenv("TAKE_PROFIT_PERCENT", 3))
+# القائمة المسموح لها بالتواصل مع البوت
+ALLOWED_CHAT_IDS = [
+    7863509137,   # حسابك الرئيسي
+    658712542     # جهازك أو حسابك الآخر
+]
