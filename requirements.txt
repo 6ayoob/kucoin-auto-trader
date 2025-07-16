@@ -1,5 +1,7 @@
 flask
+python-dotenv
 requests
-python-kucoin
+kucoin-python
+ta
 pandas
-APScheduler
+numpy

@@ -1,1 +1,1 @@
-symbol,entry_price,exit_price,qty,pl_percent,time
+symbol,side,qty,price,profit
