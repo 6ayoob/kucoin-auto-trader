@@ -1,6 +1,9 @@
 import requests
 import os
-from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+
+# توكن البوت ومعرف التيليجرام مدمجين مباشرة
+TELEGRAM_BOT_TOKEN = "7863509137:AAHBuRbtzMAOM_yBbVZASfx-oORubvQYxY8"
+TELEGRAM_CHAT_ID = 658712542  # غيّره إذا أردت معرفًا آخر
 
 def send_telegram_message(text):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
