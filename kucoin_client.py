@@ -1,12 +1,12 @@
 import time
 import requests
 import pandas as pd
-from kucoin.client import Client
+from kucoin.client import Client as KucoinClient
 from strategies import apply_strategy
 from telegram_bot import send_telegram_message
 from config import KUCOIN_API_KEY, KUCOIN_API_SECRET, KUCOIN_API_PASSPHRASE
 
-client = Client(KUCOIN_API_KEY, KUCOIN_API_SECRET, KUCOIN_API_PASSPHRASE)
+client = KucoinClient(KUCOIN_API_KEY, KUCOIN_API_SECRET, KUCOIN_API_PASSPHRASE)
 
 SYMBOL = "BTC-USDT"
 TRADE_AMOUNT = 5
