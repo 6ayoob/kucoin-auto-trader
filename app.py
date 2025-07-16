@@ -1,8 +1,11 @@
 from flask import Flask, request
-from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 from telegram_bot import send_telegram_message, send_last_trade, handle_status_command
 from kucoin_client import check_market
 import os
+
+# إدراج التوكن ومعرف التيليجرام مباشرة
+TELEGRAM_BOT_TOKEN = "7863509137:AAHBuRbtzMAOM_yBbVZASfx-oORubvQYxY8"
+TELEGRAM_CHAT_ID = 658712542  # غيّره إذا كان هناك معرف مختلف
 
 app = Flask(__name__)
 
