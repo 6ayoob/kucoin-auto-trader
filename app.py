@@ -1,6 +1,6 @@
 from flask import Flask, request
 from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
-from telegram_bot import send_telegram_message, handle_status_command
+from telegram_bot import send_telegram_message, send_last_trade, handle_status_command
 from kucoin_client import check_market
 import os
 
