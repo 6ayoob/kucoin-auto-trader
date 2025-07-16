@@ -1,4 +1,10 @@
-from kucoin_client import run_trading_bot
+name: Disable CI
 
-if __name__ == "__main__":
-    run_trading_bot()
+on: [push, pull_request]
+
+jobs:
+  disabled:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⚠️ CI is disabled
+        run: echo "GitHub Actions has been disabled for this project."
