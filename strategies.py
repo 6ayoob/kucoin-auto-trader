@@ -1,33 +1,34 @@
 import pandas as pd
+import numpy as np
 
-def calculate_rsi(prices, period=14):
-    delta = prices.diff()
-    gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
-    rs = gain / loss
-    rsi = 100 - (100 / (1 + rs))
-    return rsi
-
-def calculate_macd(prices):
-    ema12 = prices.ewm(span=12, adjust=False).mean()
-    ema26 = prices.ewm(span=26, adjust=False).mean()
-    macd = ema12 - ema26
-    signal = macd.ewm(span=9, adjust=False).mean()
+def calculate_macd(close_prices, short_window=12, long_window=26, signal_window=9):
+    """حساب مؤشرات MACD"""
+    short_ema = close_prices.ewm(span=short_window, adjust=False).mean()
+    long_ema = close_prices.ewm(span=long_window, adjust=False).mean()
+    macd = short_ema - long_ema
+    signal = macd.ewm(span=signal_window, adjust=False).mean()
     return macd, signal
 
-def is_entry_signal(prices):
-    ma50 = prices.rolling(window=50).mean()
-    rsi = calculate_rsi(prices)
-    macd, signal = calculate_macd(prices)
+def should_buy(market_data):
+    """قرار الشراء باستخدام تقاطع MACD"""
+    closes = market_data.get("closes", [])
+    if len(closes) < 30:
+        return False  # لا يوجد بيانات كافية
 
-    latest_close = prices.iloc[-1]
-    latest_ma50 = ma50.iloc[-1]
-    latest_rsi = rsi.iloc[-1]
-    latest_macd = macd.iloc[-1]
-    latest_signal = signal.iloc[-1]
+    close_series = pd.Series(closes)
+    macd, signal = calculate_macd(close_series)
 
-    return (
-        latest_close > latest_ma50 and
-        40 < latest_rsi < 70 and
-        latest_macd > latest_signal
-    )
+    # شرط: تقاطع MACD مع الإشارة صعودًا
+    if macd.iloc[-2] < signal.iloc[-2] and macd.iloc[-1] > signal.iloc[-1]:
+        return True
+
+    return False
+
+def should_sell(market_data, buy_price, stop_loss_percent):
+    """قرار البيع بناء على Stop Loss"""
+    current_price = market_data.get("price", 0)
+    if current_price == 0 or buy_price == 0:
+        return False
+
+    change = ((current_price - buy_price) / buy_price) * 100
+    return change <= -stop_loss_percent
