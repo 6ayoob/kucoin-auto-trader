@@ -4,3 +4,4 @@ requests
 kucoin-python
 ta
 setuptools
+kucoin-python==1.0.11
