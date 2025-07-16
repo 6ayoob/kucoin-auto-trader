@@ -1,4 +1,2 @@
-ccxt
-pandas
-ta
-requests
+
+flask
