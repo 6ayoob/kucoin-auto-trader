@@ -3,3 +3,4 @@ pandas
 requests
 kucoin-python
 ta
+setuptools
