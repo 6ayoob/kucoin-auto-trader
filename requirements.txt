@@ -1,8 +1,4 @@
-python-dotenv
-ta
-pandas
-numpy
-kucoin-python
-requests
+python-kucoin==2.1.1
 flask
+requests
 setuptools
