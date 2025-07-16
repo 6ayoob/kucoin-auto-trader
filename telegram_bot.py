@@ -1,38 +1,36 @@
 import requests
 from config import TELEGRAM_BOT_TOKEN, TELEGRAM_USER_ID
+from utils import set_trading_state, get_trading_state
 
-# إرسال رسالة إلى Telegram
 def send_telegram_message(text):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-    payload = {
-        "chat_id": TELEGRAM_USER_ID,
-        "text": text
-    }
+    payload = {"chat_id": TELEGRAM_USER_ID, "text": text}
     requests.post(url, data=payload)
 
-# تحليل الأوامر
 def handle_telegram_commands(message_text):
     if message_text == "/start":
-        send_telegram_message(
-            "👋 أهلاً بك في بوت KuCoin الآلي!\n"
-            "استخدم /help لعرض الأوامر المتاحة."
-        )
+        send_telegram_message("👋 أهلاً بك في بوت KuCoin!\nاستخدم /help لعرض الأوامر.")
 
     elif message_text == "/help":
         send_telegram_message(
             "🛠️ أوامر البوت:\n"
-            "/status - عرض حالة البوت الحالية\n"
-            "/last_trade - عرض آخر صفقة تمت\n"
-            "/help - عرض هذه القائمة"
+            "/status - حالة البوت\n"
+            "/last_trade - آخر صفقة\n"
+            "/pause - إيقاف التداول\n"
+            "/resume - استئناف التداول"
         )
 
     elif message_text == "/status":
-        send_telegram_message(
-            "🤖 البوت يعمل ✅\n"
-            "📊 الاستراتيجية: MACD\n"
-            "🔄 التداول كل 10 دقائق\n"
-            "📅 التقرير اليومي يتم إرساله 4م"
-        )
+        status = "✅ نشط" if get_trading_state() else "⏸️ متوقف"
+        send_telegram_message(f"🔍 حالة البوت: {status}")
+
+    elif message_text == "/pause":
+        set_trading_state(False)
+        send_telegram_message("⏸️ تم إيقاف التداول مؤقتًا.")
+
+    elif message_text == "/resume":
+        set_trading_state(True)
+        send_telegram_message("✅ تم استئناف التداول.")
 
     elif message_text == "/last_trade":
         try:
@@ -42,11 +40,10 @@ def handle_telegram_commands(message_text):
                     last = lines[-1].strip().split(",")
                     msg = f"📈 آخر صفقة:\nزوج: {last[0]}\nسعر: {last[1]}\nكمية: {last[2]}\nوقت: {last[3]}"
                 else:
-                    msg = "❗ لا توجد صفقات مسجلة بعد."
+                    msg = "❗ لا توجد صفقات بعد."
         except:
-            msg = "❗ لا يمكن قراءة ملف التداولات."
+            msg = "⚠️ تعذر قراءة الصفقات."
         send_telegram_message(msg)
 
     else:
-        send_telegram_message("❓ أمر غير معروف. استخدم /help لعرض الأوامر.")
-
+        send_telegram_message("❓ أمر غير معروف. استخدم /help.")
