@@ -1,9 +1,8 @@
 from flask import Flask, request
 from telegram_bot import send_message, handle_command
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
+# بيانات حساسة مدمجة مباشرة
+TELEGRAM_BOT_TOKEN = "7863509137:AAHBuRbtzMAOM_yBbVZASfx-oORubvQYxY8"
 
 app = Flask(__name__)
 
@@ -11,7 +10,7 @@ app = Flask(__name__)
 def home():
     return "🚀 KuCoin Auto-Trader is Live!"
 
-@app.route(f"/{os.getenv('TELEGRAM_BOT_TOKEN')}", methods=['POST'])
+@app.route(f"/{TELEGRAM_BOT_TOKEN}", methods=['POST'])
 def webhook():
     data = request.get_json()
     if "message" in data:
