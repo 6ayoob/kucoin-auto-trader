@@ -10,4 +10,4 @@ def get_trading_state() -> bool:
             data = json.load(f)
             return data.get("trading_enabled", True)
     except:
-        return True  # إذا لم يوجد الملف، نفترض أن التداول مفعل
+        return True

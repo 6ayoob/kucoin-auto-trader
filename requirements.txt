@@ -1,6 +1,5 @@
 flask
-pandas
 requests
-ta
-setuptools
-kucoin-python==1.0.11
+python-kucoin
+pandas
+APScheduler

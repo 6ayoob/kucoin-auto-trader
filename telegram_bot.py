@@ -38,7 +38,7 @@ def handle_telegram_commands(message_text):
                 lines = f.readlines()
                 if len(lines) > 1:
                     last = lines[-1].strip().split(",")
-                    msg = f"📈 آخر صفقة:\nزوج: {last[0]}\nسعر: {last[1]}\nكمية: {last[2]}\nوقت: {last[3]}"
+                    msg = f"📈 آخر صفقة:\nزوج: {last[0]}\nدخول: {last[1]}\nخروج: {last[2]}\nكمية: {last[3]}\nربح/خسارة: {last[4]}%"
                 else:
                     msg = "❗ لا توجد صفقات بعد."
         except:
