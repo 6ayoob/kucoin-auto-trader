@@ -1,5 +1,5 @@
 import requests
-from config import TELEGRAM_BOT_TOKEN, TELEGRAM_USER_ID
+from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 from utils import set_trading_state, get_trading_state
 
 def send_telegram_message(text):
