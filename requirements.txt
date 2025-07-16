@@ -1,7 +1,8 @@
-flask
 python-dotenv
-requests
-kucoin-python
 ta
 pandas
 numpy
+kucoin-python
+requests
+flask
+setuptools
